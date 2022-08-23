@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bkacad-phamhonghai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bkacad-phamhonghai
+  template:
+    metadata:
+      labels:
+        app: bkacad-phamhonghai
+    spec:
+      volumes:
+      - name: default 
+        persistentVolumeClaim:
+          claimName: bkacad-pvc
+      containers:
+      - name: bkacad-nodejs
+        image: docker.io/pinkocean/bkacad:PhamHongHai
+        ports:
+          - containerPort: 8080
+            name: nodejs
+        volumeMounts:
+          - mountPath: "/mnt/azure"
+            name: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bkacad-phamhonghai
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+  selector:
+    app: bkacad-phamhonghai
